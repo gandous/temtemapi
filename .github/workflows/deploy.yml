@@ -6,6 +6,8 @@ name: Deploy api
 on:
   push:
     branches: [ "master" ]
+  schedule:
+    cron: "0 9 * * *"
 
 permissions:
   contents: read
