@@ -78,7 +78,8 @@ def parse_table(table, category):
         out.append(data)
     return out
 
-def item():
+
+def parse_items():
     soup = get_page("https://temtem.wiki.gg/wiki/Items")
     content = soup.find(class_="mw-body-content")
     titles = content.find_all("h3")
@@ -90,5 +91,29 @@ def item():
             out.extend(parse_table(tables[i], categories[i]))
         except Exception as e:
             traceback.print_exception(e)
+    return out
+
+
+def parse_etc():
+    soup = get_page("https://temtem.wiki.gg/wiki/Category:Techniques_learned_by_Breeding")
+    etcs = []
+    content = soup.find(id="mw-pages")
+    for li in content.find_all("li"):
+        link = li.find("a")
+        etcs.append({
+            "name": clean_text(link.text),
+            "description": "",
+            "category": "ETC",
+            "buyPrice": None,
+            "sellPrice": None,
+            "smallImg": "https://temtem.wiki.gg/images/7/7e/ETC.png",
+            "img": "https://temtem.wiki.gg/images/7/7e/ETC.png"
+        })
+    return etcs
+
+
+def item():
+    out = parse_items()
+    out.extend(parse_etc())
     #print(out)
     save("item.json", json.dumps(out))
